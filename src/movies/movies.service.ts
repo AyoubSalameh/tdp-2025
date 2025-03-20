@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../db.service';
-import { CreateMovieDto } from './create-movie.dto';
+import { CreateMovieDto, MovieResponseDto } from './create-movie.dto';
 
 @Injectable()
 export class MoviesService {
     constructor(private readonly databaseService: DatabaseService) {}
 
-    async getAllMovies(): Promise<any> {
+    async getAllMovies(): Promise<MovieResponseDto[]> {
         const sql = 'SELECT * FROM movies;';
         const params = [];
         try {
@@ -15,7 +15,7 @@ export class MoviesService {
             if (result.rows.length === 0) {
                 return [];
             }
-            return result.rows;
+            return result.rows as MovieResponseDto[];
         }
         catch (error) {
             console.error('error getting all movies: ', error);
@@ -23,7 +23,7 @@ export class MoviesService {
         }
     }
 
-    async addMovie(movie: CreateMovieDto): Promise<any> {
+    async addMovie(movie: CreateMovieDto): Promise<MovieResponseDto> {
         const sql = `
             INSERT INTO movies (title, genre, duration, rating, releaseYear)
             VALUES ($1, $2, $3, $4, $5)
@@ -33,7 +33,7 @@ export class MoviesService {
         try {
             const result = await this.databaseService.query(sql, params);
             console.log('Movie added');
-            return result.rows[0];
+            return result.rows[0] as MovieResponseDto;
         }
         catch (error) {
             console.error('Error adding movie: ', error);

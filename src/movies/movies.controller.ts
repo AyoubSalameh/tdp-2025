@@ -1,15 +1,15 @@
 import { Controller, Get, Post, Body, HttpCode, HttpStatus, Delete, Param } from '@nestjs/common';
 import { MoviesService } from './movies.service';
-import { CreateMovieDto } from './create-movie.dto';
+import { CreateMovieDto, MovieResponseDto } from './create-movie.dto';
 
-//alll endpoints start with movies
+//all endpoints start with movies
 @Controller('movies')
 export class MoviesController {
 
     constructor(private readonly moviesService: MoviesService) {}
 
     @Get('all')
-    getAllMovies(): Promise<any> {
+    getAllMovies(): Promise<MovieResponseDto[]> {
         try{
             return this.moviesService.getAllMovies();
         } catch (error) {
@@ -19,7 +19,7 @@ export class MoviesController {
 
     @Post()
     @HttpCode(HttpStatus.OK)
-    addMovie(@Body() movie: CreateMovieDto): Promise<CreateMovieDto> {
+    addMovie(@Body() movie: CreateMovieDto): Promise<MovieResponseDto> {
         try {
             return this.moviesService.addMovie(movie);
         } catch (error) {
@@ -31,6 +31,7 @@ export class MoviesController {
     @HttpCode(HttpStatus.OK)
     updateMovie(@Body() movie: CreateMovieDto){
         try { 
+            console.log(movie);
             this.moviesService.updateMovie(movie);
         } catch (error) {
             throw new Error('Error updating movie');

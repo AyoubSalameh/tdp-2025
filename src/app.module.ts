@@ -6,10 +6,12 @@ import { AppService } from './app.service';
 import { DatabaseService } from './db.service';
 import { MoviesService } from './movies/movies.service';
 import { MoviesController } from './movies/movies.controller';
+import { ShowtimesService } from './showtimes/showtimes.service';
+import { ShowtimesController } from './showtimes/showtimes.controller';
 
 @Module({
   imports: [],
-  controllers: [AppController, MoviesController],
-  providers: [AppService, DatabaseService, MoviesService ],
+  controllers: [AppController, MoviesController, ShowtimesController],
+  providers: [AppService, DatabaseService, MoviesService, ShowtimesService ],
 })
 export class AppModule {}
