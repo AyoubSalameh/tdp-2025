@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 
 //added
 import { DatabaseService } from './db.service';
-import { MoviesService } from './movies.service';
-import { MoviesController } from './movies.controller';
+import { MoviesService } from './movies/movies.service';
+import { MoviesController } from './movies/movies.controller';
 
 @Module({
   imports: [],

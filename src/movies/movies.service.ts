@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from './db.service';
+import { DatabaseService } from '../db.service';
 import { CreateMovieDto } from './create-movie.dto';
 
 @Injectable()
