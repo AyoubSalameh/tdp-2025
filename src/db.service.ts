@@ -62,18 +62,30 @@ export class DatabaseService {
                 ),
                 CONSTRAINT valid_showtime_range CHECK (endtime > starttime)
             );
-       `;
+        `;
 
-       const createGistIndex = `
+        const createGistIndex = `
             CREATE INDEX IF NOT EXISTS showtimes_time_range_gist 
             ON showtimes USING gist (tstzrange(starttime, endtime));
-       `;
+        `;
+
+        const bookingTable = `
+            CREATE TABLE IF NOT EXISTS bookings (
+                bookingId UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+                showtimeId INT NOT NULL,
+                seatNumber INT NOT NULL,
+                userId UUID NOT NULL,
+                FOREIGN KEY (showtimeId) REFERENCES showtimes(id) ON DELETE CASCADE,
+                CONSTRAINT no_double_booking UNIQUE (showtimeId, seatNumber)
+            )
+        `;
         
         try {
             await this.pool.query(`CREATE EXTENSION IF NOT EXISTS btree_gist;`);
             await this.pool.query(movieTable);
             await this.pool.query(showtimeTable);
             await this.pool.query(createGistIndex);
+            await this.pool.query(bookingTable);
             console.log('Schema initialized');
         } catch (error) {
             console.error('Error initializing schema', error);

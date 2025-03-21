@@ -8,10 +8,12 @@ import { MoviesService } from './movies/movies.service';
 import { MoviesController } from './movies/movies.controller';
 import { ShowtimesService } from './showtimes/showtimes.service';
 import { ShowtimesController } from './showtimes/showtimes.controller';
+import { BookingsService } from './bookings/bookings.service';
+import { BookingsController } from './bookings/bookings.controller';
 
 @Module({
   imports: [],
-  controllers: [AppController, MoviesController, ShowtimesController],
-  providers: [AppService, DatabaseService, MoviesService, ShowtimesService ],
+  controllers: [AppController, MoviesController, ShowtimesController, BookingsController],
+  providers: [AppService, DatabaseService, MoviesService, ShowtimesService, BookingsService ],
 })
 export class AppModule {}
