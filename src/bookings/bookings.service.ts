@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "src/db.service";
 import { BookingResponseDto, CreateBookingDto } from "./create-booking.dto";
 
@@ -16,13 +16,22 @@ export class BookingsService {
         const params = [booking.showtimeId, booking.seatNumber, booking.userId];
         try {
             const result = await this.databaseService.query(sql, params);
-            console.log('Ticket booked');
-            console.log(result.rows[0]);
+            if (result.rows.length === 0) {
+                throw new BadRequestException('Invalid request');
+            }
             return result.rows[0] as BookingResponseDto;
         }
         catch (error) {
-            console.error('Error booking ticket: ', error);
-            throw new Error('Error booking ticket');
+            if (error.code === '23503') {
+                throw new NotFoundException('Showtime not found');
+            }
+            else if (error.code === '23505') {
+                throw new BadRequestException('Seat already booked');
+            }
+            else {
+                console.error('Error booking ticket: ', error);
+                throw new Error('Error booking ticket');
+            }
         }
     }
 

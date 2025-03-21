@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "../db.service";
 import { CreateShowtimeDto, ShowtimeResponseDto } from "./create-showtime.dto";
 
@@ -6,21 +6,15 @@ import { CreateShowtimeDto, ShowtimeResponseDto } from "./create-showtime.dto";
 export class ShowtimesService {
     constructor(private readonly databaseService: DatabaseService) {}
 
-    async getAllShowtimes(): Promise<CreateShowtimeDto[]> {
+    async getAllShowtimes(): Promise<ShowtimeResponseDto[]> {
         const sql = 'SELECT * FROM showtimes;';
         const params = [];
-        try {
-            const result = await this.databaseService.query(sql, params);
-            console.log(result.rows);
-            if (result.rows.length === 0) {
-                return [];
-            }
-            return result.rows as CreateShowtimeDto[];
+        const result = await this.databaseService.query(sql, params);
+        console.log(result.rows);
+        if (result.rows.length === 0) {
+            return [];
         }
-        catch (error) {
-            console.error('error getting all showtimes: ', error);
-            throw new Error('Error getting all showtimes');
-        }
+        return result.rows as ShowtimeResponseDto[];
     }
 
     async getShowtimeById(showtimeId: string): Promise<ShowtimeResponseDto> {
@@ -29,17 +23,11 @@ export class ShowtimesService {
             WHERE id = $1;
         `
         const params = [showtimeId];
-        try {
-            const result = await this.databaseService.query(sql, params);
-            if (result.rows.length === 0) {
-                console.log('no showtime found');
-                return null;
-            }
-            return result.rows[0] as ShowtimeResponseDto;
-        } catch (error) {
-            console.error('error getting showtime by id: ', error);
-            throw new Error('Error getting showtime by id');
+        const result = await this.databaseService.query(sql, params);
+        if (result.rows.length === 0) {
+            throw new NotFoundException('Showtime not found');
         }
+        return result.rows[0] as ShowtimeResponseDto;
     }
 
     async addShowtime(showtime: CreateShowtimeDto): Promise<ShowtimeResponseDto> {
@@ -51,12 +39,22 @@ export class ShowtimesService {
         const params = [showtime.price, showtime.movieId, showtime.theater, showtime.startTime, showtime.endTime];
         try {
             const result = await this.databaseService.query(sql, params);
-            console.log(showtime);
-            console.log(result.rows);
+            if (result.rows.length === 0) {
+                throw new BadRequestException("invalid request")
+            }
             return result.rows[0] as ShowtimeResponseDto;
         } catch (error) {
-            console.error('error adding showtime: ', error);
-            throw new Error('Error adding showtime');
+            if (error.code === '23503') {
+                throw new NotFoundException('Movie not found');
+            } else if (error.code === '23P01') {
+                throw new BadRequestException('Showtime overlaps with existing showtime');
+            } else if (error.code === '23514') {
+                throw new BadRequestException('End time must be after start time');
+            }
+            else {
+                console.error('error adding showtime: ', error);
+                throw new Error('Error adding showtime');
+            }
         }
     }
 
@@ -68,17 +66,25 @@ export class ShowtimesService {
             RETURNING *;
         `;
         const params = [showtimeId, showtime.price, showtime.movieId, showtime.theater, showtime.startTime, showtime.endTime];
-        try {
+        try{
             const result = await this.databaseService.query(sql, params);
             if (result.rows.length === 0) {
-                console.log('showtime not found');
-                throw new Error('Showtime not found');
+                throw new NotFoundException('Showtime not found');
             }
             return result.rows[0] as ShowtimeResponseDto;
         } catch (error) {
+            if (error.code === '23503') {
+                throw new NotFoundException('Movie not found');
+            } else if (error.code === '23P01') {
+                throw new BadRequestException('Showtime overlaps with existing showtime');
+            } else if (error.code === '23514') {
+                throw new BadRequestException('End time must be after start time');
+            }
+            
             console.error('error updating showtime: ', error);
-            throw new Error('Error updating showtime');
+            throw error;
         }
+        
     }
 
     async deleteShowtime(showtimeId: string): Promise<void> {
@@ -87,12 +93,9 @@ export class ShowtimesService {
             WHERE id = $1;
         `;
         const params = [showtimeId];
-        try {
-            await this.databaseService.query(sql, params);
-
-        } catch (error) {
-            console.error('error deleting showtime: ', error);
-            throw new Error('Error deleting showtime');
+        const result = await this.databaseService.query(sql, params);
+        if (result.rowCount === 0) {
+            throw new NotFoundException('Showtime not found');
         }
     }
 

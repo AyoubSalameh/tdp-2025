@@ -19,8 +19,8 @@ export class DatabaseService {
         try{
             return this.pool.query(sql, params);
         } catch (error) {
-            console.error('Error executing query', error);
-            throw new Error('Error executing query');
+            console.error('Error executing query', error.message);
+            throw error;
         }
     }
 

@@ -8,32 +8,19 @@ export class ShowtimesController {
     constructor(private readonly showtimesService: ShowtimesService) {}
 
     @Get('all')
-    getAllShowtimes(): Promise<CreateShowtimeDto[]> {
-        try {
-            console.log('getting all showtimes');
-            return this.showtimesService.getAllShowtimes();
-        } catch (error) {
-            throw new Error('Error getting all showtimes');
-        }
+    getAllShowtimes(): Promise<ShowtimeResponseDto[]> {
+        return this.showtimesService.getAllShowtimes();
     }
 
     @Get(':showtimeId')
     getShowtimeById(@Param('showtimeId') showtimeId: string): Promise<ShowtimeResponseDto> {
-        try {
-            return this.showtimesService.getShowtimeById(showtimeId);
-        } catch (error) {
-            throw new Error('Error getting showtime by id');
-        }
+        return this.showtimesService.getShowtimeById(showtimeId);    
     }
 
     @Post()
     @HttpCode(HttpStatus.OK)
     addShowtime(@Body() showtime: CreateShowtimeDto): Promise<ShowtimeResponseDto> {
-        try {
-            return this.showtimesService.addShowtime(showtime);
-        } catch (error) {
-            throw new Error('Error adding showtime');
-        }
+        return this.showtimesService.addShowtime(showtime);
     }
 
     @Post('update/:showtimeId')
@@ -41,22 +28,12 @@ export class ShowtimesController {
     async updateShowtime(
         @Param('showtimeId') showtimeId: string,
         @Body() showtime: CreateShowtimeDto) {
-        try {
-            await this.showtimesService.updateShowtime(showtimeId, showtime);
-        } catch (error) {
-            //throw new Error('Error updating showtime');
-            throw new HttpException('Error updating showtime', HttpStatus.BAD_REQUEST);
-        }
+        await this.showtimesService.updateShowtime(showtimeId, showtime);  
     }
     
     @Delete(':showtimeId')
     @HttpCode(HttpStatus.OK)
     async deleteShowtime(@Param('showtimeId') showtimeId: string) {
-        try {
-            await this.showtimesService.deleteShowtime(showtimeId);
-        } catch (error) {
-            throw new Error('Error deleting showtime');
-        }
+        await this.showtimesService.deleteShowtime(showtimeId);
     }
-
 }

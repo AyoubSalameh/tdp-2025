@@ -42,8 +42,7 @@ export class MoviesService {
         if (result.rows.length === 0) {
             throw new NotFoundException(`Movie not found`);
         }
-    
-        return result.rows[0];
+        return result.rows[0] as MovieResponseDto;
     }
 
     async deleteMovie(movieTitle: string) {
