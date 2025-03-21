@@ -23,8 +23,11 @@ export class MoviesController {
 
     @Post('update/:movieTitle')
     @HttpCode(HttpStatus.OK)
-    updateMovie(@Body() movie: CreateMovieDto){
-        return this.moviesService.updateMovie(movie);
+    updateMovie(
+        @Param('movieTitle') movieTitle: string,
+        @Body() movie: CreateMovieDto){
+        const decoded = decodeURIComponent(movieTitle.replace(/\+/g, ' '));
+        return this.moviesService.updateMovie(decoded, movie);
     }
 
     @Delete(':movieTitle')

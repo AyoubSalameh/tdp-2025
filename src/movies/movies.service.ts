@@ -30,17 +30,17 @@ export class MoviesService {
     }
 
     //returns 404 if movie not found
-    async updateMovie(movie: CreateMovieDto) {
+    async updateMovie(originalTitle: string, movie: CreateMovieDto) {
         const sql = `
             UPDATE movies
-            SET genre = $2, duration = $3, rating = $4, releaseYear = $5
+            SET title = $2, genre = $3, duration = $4, rating = $5, releaseYear = $6
             WHERE title = $1
             RETURNING *;
         `
-        const params = [movie.title, movie.genre, movie.duration, movie.rating, movie.releaseYear];
+        const params = [originalTitle, movie.title, movie.genre, movie.duration, movie.rating, movie.releaseYear];
         const result = await this.databaseService.query(sql, params);
         if (result.rows.length === 0) {
-            throw new NotFoundException(`Movie with title "${movie.title}" not found`);
+            throw new NotFoundException(`Movie not found`);
         }
     
         return result.rows[0];
