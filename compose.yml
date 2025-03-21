@@ -6,12 +6,8 @@ services:
       POSTGRES_USER: popcorn-palace
       POSTGRES_PASSWORD: popcorn-palace
       POSTGRES_DB: popcorn-palace
-    volumes:
-      - ./data:/var/lib/postgresql/data
     # volumes:
-    #  - type: bind
-    #    source: ./data
-    #    target: /var/lib/postgresql/data --> in case u need to save data to local storage
+    #   - ./data:/var/lib/postgresql/data
     ports:
       - target: 5432
         published: 5432
