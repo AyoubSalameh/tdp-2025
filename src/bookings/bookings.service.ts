@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { DatabaseService } from "src/db.service";
+import { DatabaseService } from "../db.service";
 import { BookingResponseDto, CreateBookingDto } from "./create-booking.dto";
 
 @Injectable()
