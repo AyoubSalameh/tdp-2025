@@ -7,7 +7,7 @@ export class MoviesService {
     constructor(private readonly databaseService: DatabaseService) {}
 
     async getAllMovies(): Promise<MovieResponseDto[]> {
-        const sql = 'SELECT * FROM movies;';
+        const sql = 'SELECT id, title, genre, duration, rating::FLOAT AS rating, "releaseYear" FROM movies;';
         const params = [];
         const result = await this.databaseService.query(sql, params);
         if (result.rows.length === 0) {
@@ -18,9 +18,9 @@ export class MoviesService {
 
     async addMovie(movie: CreateMovieDto): Promise<MovieResponseDto> {
         const sql = `
-            INSERT INTO movies (title, genre, duration, rating, releaseYear)
+            INSERT INTO movies (title, genre, duration, rating, "releaseYear")
             VALUES ($1, $2, $3, $4, $5)
-            RETURNING *;
+            RETURNING id, title, genre, duration, rating::FLOAT AS rating, "releaseYear";
         `;
         const params = [movie.title, movie.genre, movie.duration, movie.rating, movie.releaseYear];
         const result = await this.databaseService.query(sql, params);
@@ -33,9 +33,9 @@ export class MoviesService {
     async updateMovie(originalTitle: string, movie: CreateMovieDto) {
         const sql = `
             UPDATE movies
-            SET title = $2, genre = $3, duration = $4, rating = $5, releaseYear = $6
+            SET title = $2, genre = $3, duration = $4, rating = $5, "releaseYear" = $6
             WHERE title = $1
-            RETURNING *;
+            RETURNING id, title, genre, duration, rating::FLOAT AS rating, "releaseYear";
         `
         const params = [originalTitle, movie.title, movie.genre, movie.duration, movie.rating, movie.releaseYear];
         const result = await this.databaseService.query(sql, params);

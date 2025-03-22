@@ -7,7 +7,6 @@ import { mock } from 'node:test';
 import exp from 'constants';
 import { NotFoundException } from '@nestjs/common';
 
-//describe 
 describe('MoviesService', () => {
 
     let service: MoviesService;

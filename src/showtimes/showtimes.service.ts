@@ -7,7 +7,7 @@ export class ShowtimesService {
     constructor(private readonly databaseService: DatabaseService) {}
 
     async getAllShowtimes(): Promise<ShowtimeResponseDto[]> {
-        const sql = 'SELECT * FROM showtimes;';
+        const sql = 'SELECT id, price::FLOAT AS price, "movieId", theater, "startTime", "endTime" FROM showtimes;';
         const params = [];
         const result = await this.databaseService.query(sql, params);
         console.log(result.rows);
@@ -19,7 +19,8 @@ export class ShowtimesService {
 
     async getShowtimeById(showtimeId: string): Promise<ShowtimeResponseDto> {
         const sql = `
-            SELECT * FROM showtimes
+            SELECT id, price::FLOAT AS price, "movieId", theater, "startTime", "endTime"
+            FROM showtimes
             WHERE id = $1;
         `
         const params = [showtimeId];
@@ -32,9 +33,9 @@ export class ShowtimesService {
 
     async addShowtime(showtime: CreateShowtimeDto): Promise<ShowtimeResponseDto> {
         const sql = `
-            INSERT INTO showtimes (price, movieId, theater, startTime, endTime)
+            INSERT INTO showtimes (price, "movieId", theater, "startTime", "endTime")
             VALUES ($1, $2, $3, $4, $5)
-            RETURNING *;
+            RETURNING id, price::FLOAT AS price, "movieId", theater, "startTime", "endTime";
         `;
         const params = [showtime.price, showtime.movieId, showtime.theater, showtime.startTime, showtime.endTime];
         try {
@@ -61,9 +62,9 @@ export class ShowtimesService {
     async updateShowtime(showtimeId: string, showtime: CreateShowtimeDto) {
         const sql = `
             UPDATE showtimes
-            SET price = $2, movieId = $3, theater = $4, startTime = $5, endTime = $6
+            SET price = $2, "movieId" = $3, theater = $4, "startTime" = $5, "endTime" = $6
             WHERE id = $1
-            RETURNING *;
+            RETURNING id, price::FLOAT AS price, "movieId", theater, "startTime", "endTime";
         `;
         const params = [showtimeId, showtime.price, showtime.movieId, showtime.theater, showtime.startTime, showtime.endTime];
         try{

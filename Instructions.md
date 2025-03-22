@@ -224,7 +224,7 @@ Status Codes:
 | :--- | :--- | :--- |
 | 200 | `OK` | Success |
 | 400 | `BAD REQUEST` | Invalid Parameters or Overlapping Showtimes |
-| 404 | `NOT FOUND` |  Showtime or Movie Not Found |
+| 404 | `NOT FOUND` | Movie Not Found |
 
 ---
 
