@@ -1,10 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { BookingsService } from './bookings.service';
 import { DatabaseService } from '../db.service';
-import { CreateBookingDto, BookingResponseDto } from './create-booking.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import exp from 'constants';
-import { error } from 'console';
+
 
 describe('BookingsService', () => {
 
@@ -30,7 +28,8 @@ describe('BookingsService', () => {
         expect(service).toBeDefined();
     });
 
-    const booking: CreateBookingDto = {
+    const booking = {
+        bookingId: "123e4567-e89b-12d3-a456-426614174000",
         showtimeId: 1,
         seatNumber: 1,
         userId: "84438967-f68f-4fa0-b620-0f08217e76af"
