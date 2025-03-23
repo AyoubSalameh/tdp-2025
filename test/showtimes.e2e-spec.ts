@@ -4,6 +4,7 @@ import { INestApplication } from "@nestjs/common";
 import * as request from 'supertest';
 import { AppModule } from "../src/app.module";
 import { response } from 'express';
+import exp from 'constants';
 
 describe('MoviesController (e2e)', () => {
     let app: INestApplication;
@@ -42,6 +43,8 @@ describe('MoviesController (e2e)', () => {
     it('Should return a list with only one movie', async () => {
         const response = await request(app.getHttpServer())
         .get('/movies/all').expect(200);
+
+        
         expect(response.body).toEqual([
             {
                 id: 1,
@@ -67,6 +70,7 @@ describe('MoviesController (e2e)', () => {
         .expect(404);
     });
 
+
     it('should add a showtime and return it with id field', async () => {
         const response = await request(app.getHttpServer())
         .post('/showtimes')
@@ -78,15 +82,15 @@ describe('MoviesController (e2e)', () => {
             endTime: '2021-09-06T14:00:00.000Z'
         })
         .expect(200)
-        expect(response.body).toEqual({
-            id: 1,
-            price: 30,
-            movieId: 1,
-            theater: "Theater 1",
-            startTime: '2021-09-06T12:00:00.000Z',
-            endTime: '2021-09-06T14:00:00.000Z'
 
-        });
+        expect(response.body).toHaveProperty('id');
+        expect(response.body.price).toBe(30);
+        expect(response.body.movieId).toBe(1);
+        expect(response.body.theater).toBe('Theater 1');
+        expect(response.body.startTime).toBe('2021-09-06T12:00:00.000Z');
+        expect(response.body.endTime).toBe('2021-09-06T14:00:00.000Z');
+
+       
     });
 
     it('should return a list containing one showtime', async () => {
@@ -107,17 +111,16 @@ describe('MoviesController (e2e)', () => {
         const response = await request(app.getHttpServer())
         .get('/showtimes/1')
         .expect(200)
-        expect(response.body).toEqual({
-            id: 1,
-            price: 30,
-            movieId: 1,
-            theater: "Theater 1",
-            startTime: '2021-09-06T12:00:00.000Z',
-            endTime: '2021-09-06T14:00:00.000Z'
-        });
+
+        expect(response.body).toHaveProperty('id');
+        expect(response.body.price).toBe(30);
+        expect(response.body.movieId).toBe(1);
+        expect(response.body.theater).toBe('Theater 1');
+        expect(response.body.startTime).toBe('2021-09-06T12:00:00.000Z');
+        expect(response.body.endTime).toBe('2021-09-06T14:00:00.000Z');
     });
 
-    it('it should fail to add a showtime with an invalid movieId', async () => {
+    it('should fail to add a showtime with an invalid movieId', async () => {
         const response = await request(app.getHttpServer())
         .post('/showtimes')
         .send({
@@ -130,7 +133,7 @@ describe('MoviesController (e2e)', () => {
         .expect(404);
     });
 
-    it('it should fail to add a showtime with an overlapping time', async () => {
+    it('should fail to add a showtime with an overlapping time', async () => {
         const response = await request(app.getHttpServer())
         .post('/showtimes')
         .send({
@@ -143,7 +146,7 @@ describe('MoviesController (e2e)', () => {
         .expect(400);
     });
 
-    it('it should succeed to add another showtime with a valid time', async () => {
+    it('should succeed to add another showtime with a valid time', async () => {
        const response = await request(app.getHttpServer())
         .post('/showtimes')
         .send({
@@ -154,7 +157,77 @@ describe('MoviesController (e2e)', () => {
             endTime: '2021-09-06T17:00:00.000Z'
         })
         .expect(200)
-    
+        expect(response.body).toHaveProperty('id');
+        expect(response.body.price).toBe(30);
+        expect(response.body.movieId).toBe(1);
+        expect(response.body.theater).toBe('Theater 1');
+        expect(response.body.startTime).toBe('2021-09-06T15:00:00.000Z');
+        expect(response.body.endTime).toBe('2021-09-06T17:00:00.000Z');
+
+    });
+
+    it('should fail to update a non existent showtime', async () => {
+        const response = await request(app.getHttpServer())
+        .post('/showtimes/update/41')
+        .send({
+            movieId: 1,
+            price: 30,
+            theater: "Theater 1",
+            startTime: '2021-09-06T15:00:00.000Z',
+            endTime: '2021-09-06T17:00:00.000Z'
+        })
+        .expect(404);
+    });
+
+    it('should fail to update a showtime with an invalid movieId', async () => {
+        const response = await request(app.getHttpServer())
+        .post('/showtimes/update/1')
+        .send({
+            movieId: 2,
+            price: 30,
+            theater: "Theater 1",
+            startTime: '2021-09-06T12:00:00.000Z',
+            endTime: '2021-09-06T14:00:00.000Z'
+        })
+        .expect(404);
+    });
+
+    it('should fail to update a showtime with an overlapping time', async () => {
+        const response = await request(app.getHttpServer())
+        .post('/showtimes/update/1')
+        .send({
+            movieId: 1,
+            price: 30,
+            theater: "Theater 1",
+            startTime: '2021-09-06T14:00:00.000Z',
+            endTime: '2021-09-06T16:00:00.000Z'
+        })
+        .expect(400);
+    });
+
+    it('should succeed to update a showtime with a valid time', async () => {
+        await request(app.getHttpServer())
+        .post('/showtimes/update/1')
+        .send({
+            movieId: 1,
+            price: 30,
+            theater: "Theater 1",
+            startTime: '2021-09-07T14:00:00.000Z',
+            endTime: '2021-09-07T16:00:00.000Z'
+        })
+        .expect(200)
+    });
+
+    it('should fail to delete a non existent showtime', async () => {
+        await request(app.getHttpServer())
+        .delete('/showtimes/41')
+        .expect(404);
+    });
+
+    it('should succeed to delete a showtime', async () => {
+        await request(app.getHttpServer())
+        .delete('/showtimes/1')
+        .expect(200);
     });
 
 

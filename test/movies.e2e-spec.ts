@@ -23,6 +23,7 @@ describe('MoviesController (e2e)', () => {
     });
 
     afterAll( async () => {
+        await db.query(`TRUNCATE TABLE movies, bookings RESTART IDENTITY CASCADE`, []);
         await app.close();
     });
 
@@ -46,14 +47,12 @@ describe('MoviesController (e2e)', () => {
                 releaseYear: 2014
             })
             .expect(200)
-            expect(response.body).toEqual({
-                id: 1,
-                title: 'Interstellar',
-                genre: 'Sci-Fi',
-                duration: 169,
-                rating: 8.7,
-                releaseYear: 2014
-            });
+            expect(response.body).toHaveProperty('id');
+            expect(response.body.title).toBe('Interstellar');
+            expect(response.body.genre).toBe('Sci-Fi');
+            expect(response.body.duration).toBe(169);
+            expect(response.body.rating).toBe(8.7);
+            expect(response.body.releaseYear).toBe(2014);
     });
 
     // getting all movies when one movie is present
@@ -73,6 +72,7 @@ describe('MoviesController (e2e)', () => {
 
     //updating a movie
     it('should update the movie\'s rating and return the updated one' , async () => {
+        // changing rating from 8.7 to 10
         const response = await request(app.getHttpServer())
             .post('/movies/update/Interstellar')
             .send({
@@ -83,14 +83,12 @@ describe('MoviesController (e2e)', () => {
                 releaseYear: 2014
             })
             .expect(200)
-        expect(response.body).toEqual({
-            id: 1,
-            title: 'Interstellar',
-            genre: 'Sci-Fi',
-            duration: 169,
-            rating: 10,
-            releaseYear: 2014
-        });
+            expect(response.body).toHaveProperty('id');
+            expect(response.body.title).toBe('Interstellar');
+            expect(response.body.genre).toBe('Sci-Fi');
+            expect(response.body.duration).toBe(169);
+            expect(response.body.rating).toBe(10);
+            expect(response.body.releaseYear).toBe(2014);
     });
 
     it('shoud return list of all movies', async () => {
@@ -146,13 +144,11 @@ describe('MoviesController (e2e)', () => {
                 releaseYear: 2014
             })
             .expect(200)
-        expect(response.body).toEqual({
-            id: 2,
-            title: 'Interstellar',
-            genre: 'Sci-Fi',
-            duration: 169,
-            rating: 8.7,
-            releaseYear: 2014
-        });
+            expect(response.body).toHaveProperty('id');
+            expect(response.body.title).toBe('Interstellar');
+            expect(response.body.genre).toBe('Sci-Fi');
+            expect(response.body.duration).toBe(169);
+            expect(response.body.rating).toBe(8.7);
+            expect(response.body.releaseYear).toBe(2014);
     });
 });
