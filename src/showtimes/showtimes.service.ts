@@ -16,7 +16,7 @@ export class ShowtimesService {
         return result.rows as ShowtimeResponseDto[];
     }
 
-    async getShowtimeById(showtimeId: string): Promise<ShowtimeResponseDto> {
+    async getShowtimeById(showtimeId: number): Promise<ShowtimeResponseDto> {
         const sql = `
             SELECT id, price::FLOAT AS price, "movieId", theater, "startTime", "endTime"
             FROM showtimes
@@ -52,13 +52,12 @@ export class ShowtimesService {
                 throw new BadRequestException('End time must be after start time');
             }
             else {
-                console.error('error adding showtime: ', error);
                 throw new Error('Error adding showtime');
             }
         }
     }
 
-    async updateShowtime(showtimeId: string, showtime: CreateShowtimeDto) {
+    async updateShowtime(showtimeId: number, showtime: CreateShowtimeDto) {
         const sql = `
             UPDATE showtimes
             SET price = $2, "movieId" = $3, theater = $4, "startTime" = $5, "endTime" = $6
@@ -80,14 +79,12 @@ export class ShowtimesService {
             } else if (error.code === '23514') {
                 throw new BadRequestException('End time must be after start time');
             }
-            
-            console.error('error updating showtime: ', error);
             throw error;
         }
         
     }
 
-    async deleteShowtime(showtimeId: string): Promise<void> {
+    async deleteShowtime(showtimeId: number): Promise<void> {
         const sql = `
             DELETE FROM showtimes
             WHERE id = $1;

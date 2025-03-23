@@ -13,7 +13,7 @@ export class ShowtimesController {
     }
 
     @Get(':showtimeId')
-    getShowtimeById(@Param('showtimeId') showtimeId: string): Promise<ShowtimeResponseDto> {
+    getShowtimeById(@Param('showtimeId') showtimeId: number): Promise<ShowtimeResponseDto> {
         return this.showtimesService.getShowtimeById(showtimeId);    
     }
 
@@ -26,14 +26,14 @@ export class ShowtimesController {
     @Post('update/:showtimeId')
     @HttpCode(HttpStatus.OK)
     async updateShowtime(
-        @Param('showtimeId') showtimeId: string,
+        @Param('showtimeId') showtimeId: number,
         @Body() showtime: CreateShowtimeDto) {
         await this.showtimesService.updateShowtime(showtimeId, showtime);  
     }
     
     @Delete(':showtimeId')
     @HttpCode(HttpStatus.OK)
-    async deleteShowtime(@Param('showtimeId') showtimeId: string) {
+    async deleteShowtime(@Param('showtimeId') showtimeId: number) {
         await this.showtimesService.deleteShowtime(showtimeId);
     }
 }

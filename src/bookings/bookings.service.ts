@@ -29,7 +29,6 @@ export class BookingsService {
                 throw new BadRequestException('Seat already booked');
             }
             else {
-                console.error('Error booking ticket: ', error);
                 throw new Error('Error booking ticket');
             }
         }
