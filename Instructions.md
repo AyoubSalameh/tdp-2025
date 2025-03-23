@@ -143,8 +143,8 @@ Example Response:
     "price": "20.20",
     "movieid": 4,
     "theater": "Sample Theater",
-    "starttime": "2025-02-14T12:47:46.125Z",
-    "endtime": "2025-02-14T15:47:46.125Z"
+    "startTime": "2025-02-14T12:47:46.125Z",
+    "endTime": "2025-02-14T15:47:46.125Z"
     },
     {
         ...
@@ -177,8 +177,8 @@ Example Response:
     "price": "20.20",
     "movieid": 4,
     "theater": "Sample Theater",
-    "starttime": "2025-02-14T12:47:46.125Z",
-    "endtime": "2025-02-14T15:47:46.125Z"
+    "startTime": "2025-02-14T12:47:46.125Z",
+    "endTime": "2025-02-14T15:47:46.125Z"
 }
 ```
 
@@ -214,8 +214,8 @@ Example Response:
     "price": "20.20",
     "movieid": 4,
     "theater": "Sample Theater",
-    "starttime": "2025-02-14T12:47:46.125Z",
-    "endtime": "2025-02-14T15:47:46.125Z"
+    "startTime": "2025-02-14T12:47:46.125Z",
+    "endTime": "2025-02-14T15:47:46.125Z"
 }
 ```
 

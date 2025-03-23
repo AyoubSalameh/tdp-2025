@@ -75,12 +75,12 @@ export class DatabaseService {
 
         const bookingTable = `
             CREATE TABLE IF NOT EXISTS bookings (
-                bookingId UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-                showtimeId INT NOT NULL,
-                seatNumber INT NOT NULL,
-                userId UUID NOT NULL,
-                FOREIGN KEY (showtimeId) REFERENCES showtimes(id) ON DELETE CASCADE,
-                CONSTRAINT no_double_booking UNIQUE (showtimeId, seatNumber)
+                "bookingId" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+                "showtimeId" INT NOT NULL,
+                "seatNumber" INT NOT NULL,
+                "userId" UUID NOT NULL,
+                FOREIGN KEY ("showtimeId") REFERENCES showtimes(id) ON DELETE CASCADE,
+                CONSTRAINT no_double_booking UNIQUE ("showtimeId", "seatNumber")
             )
         `;
         

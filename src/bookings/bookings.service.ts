@@ -9,9 +9,9 @@ export class BookingsService {
 
     async bookTicket(booking: CreateBookingDto): Promise<BookingResponseDto> {
         const sql = `
-            INSERT INTO bookings (showtimeId, seatNumber, userId) 
+            INSERT INTO bookings ("showtimeId", "seatNumber", "userId") 
             VALUES ($1, $2, $3)
-            RETURNING bookingId;
+            RETURNING "bookingId";
         `
         const params = [booking.showtimeId, booking.seatNumber, booking.userId];
         try {
