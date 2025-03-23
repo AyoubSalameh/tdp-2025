@@ -1,5 +1,4 @@
 import { IsNotEmpty, IsNumber, IsUUID, Min } from "class-validator";
-import { UUID } from "crypto";
 
 export class CreateBookingDto {
 
@@ -14,12 +13,12 @@ export class CreateBookingDto {
 
     @IsUUID()
     @IsNotEmpty()
-    userId: UUID;
+    userId: string;
 }
 
 export class BookingResponseDto {
 
     @IsUUID()
     @IsNotEmpty()
-    bookingId: UUID;
+    bookingId: string;
 }

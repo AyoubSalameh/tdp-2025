@@ -1,6 +1,6 @@
 import { DatabaseService } from '../src/db.service';
 import { Test, TestingModule } from "@nestjs/testing";
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
 import * as request from 'supertest';
 import { AppModule } from "../src/app.module";
 
@@ -17,6 +17,13 @@ describe('MoviesController (e2e)', () => {
 
         app = moduleFixture.createNestApplication();
         db = moduleFixture.get<DatabaseService>(DatabaseService);
+
+        app.useGlobalPipes(new ValidationPipe({
+                    whitelist: true,
+                    forbidNonWhitelisted: true,
+                    transform: true
+                }));
+            
         await app.init();
 
         await db.query(`TRUNCATE TABLE movies, showtimes, bookings RESTART IDENTITY CASCADE;`, []);
@@ -55,6 +62,18 @@ describe('MoviesController (e2e)', () => {
             expect(response.body.releaseYear).toBe(2014);
     });
 
+    it('should return 400 for adding a movie with missing fields', async () => {
+        await request(app.getHttpServer())
+            .post('/movies')
+            .send({
+                title: 'Interstellar',
+                genre: 'Sci-Fi',
+                duration: 169,
+                rating: 8.7
+            })
+            .expect(400);
+    });
+
     // getting all movies when one movie is present
     it('should return a list containing one movie', async () => {
         const response = await request(app.getHttpServer())
@@ -68,6 +87,18 @@ describe('MoviesController (e2e)', () => {
                 rating: 8.7,
                 releaseYear: 2014
             }])
+    });
+
+    it('should return 400 for updating a movie with missing fields', async () => {
+        await request(app.getHttpServer())
+            .post('/movies/update/Interstellar')
+            .send({
+                title: 'Interstellar',
+                genre: 'Sci-Fi',
+                duration: 169,
+                rating: 8.7
+            })
+            .expect(400);
     });
 
     //updating a movie
@@ -91,7 +122,7 @@ describe('MoviesController (e2e)', () => {
             expect(response.body.releaseYear).toBe(2014);
     });
 
-    it('shoud return list of all movies', async () => {
+    it('should return list of all movies', async () => {
         const response = await request(app.getHttpServer())
             .get('/movies/all')
             .expect(200)
@@ -113,7 +144,7 @@ describe('MoviesController (e2e)', () => {
     });
 
     // updating a deleted movie
-    it('should return 404 for updating a non existend movie' , async () => {
+    it('should return 404 for updating a non existent movie' , async () => {
         const response = await request(app.getHttpServer())
             .post('/movies/update/Interstellar')
             .send({
@@ -126,6 +157,7 @@ describe('MoviesController (e2e)', () => {
             .expect(404)
     });
 
+
     // Deleting a non existing movie
     it('should return 404 for deleting a non existent movie', async () => {
         await request(app.getHttpServer())
@@ -133,7 +165,7 @@ describe('MoviesController (e2e)', () => {
             .expect(404);
     });
 
-    it('trying to add movie)', async () => {
+    it('trying to add movie', async () => {
         const response = await request(app.getHttpServer())
             .post('/movies')
             .send({
@@ -150,5 +182,18 @@ describe('MoviesController (e2e)', () => {
             expect(response.body.duration).toBe(169);
             expect(response.body.rating).toBe(8.7);
             expect(response.body.releaseYear).toBe(2014);
+    });
+
+    it('should return 400 for adding a movie with invalid fields', async () => {
+        await request(app.getHttpServer())
+            .post('/movies')
+            .send({
+                title: 'Interstellar',
+                genre: 'Sci-Fi',
+                duration: -169,
+                rating: 8.7,
+                releaseYear: 2014
+            })
+            .expect(400);
     });
 });

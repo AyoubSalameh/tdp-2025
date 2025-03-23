@@ -1,10 +1,17 @@
 # Popcorn Palace API
 
 ## Content:
+- [Overview](#overview)
 - [Endpoints](#api-endpoints)
     - [Movies](#movies)
     - [Showtimes](#showtimes)
     - [Bookings](#bookings)
+
+---
+
+## Overview
+This repository implements a movie ticket booking system API, using TypeScript with NestJS, while also using PostgreSQL as the database.
+in this project, i used plain SQL queries for the CRUD operations.
 
 ---
 
@@ -303,5 +310,7 @@ Status Codes:
 | 200 | `OK` | Success |
 | 400 | `BAD REQUEST` | Invalid Parameters, or Seat Already Booked |
 | 404 | `NOT FOUND` | Showtime Not Found |
+
+---
 
 

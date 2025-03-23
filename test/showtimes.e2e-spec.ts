@@ -1,6 +1,6 @@
 import { DatabaseService } from '../src/db.service';
 import { Test, TestingModule } from "@nestjs/testing";
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
 import * as request from 'supertest';
 import { AppModule } from "../src/app.module";
 import { response } from 'express';
@@ -18,6 +18,13 @@ describe('MoviesController (e2e)', () => {
 
         app = moduleFixture.createNestApplication();
         db = moduleFixture.get<DatabaseService>(DatabaseService);
+
+        app.useGlobalPipes(new ValidationPipe({
+                    whitelist: true,
+                    forbidNonWhitelisted: true,
+                    transform: true
+                }));
+            
         await app.init();
 
         await db.query(`TRUNCATE TABLE movies, showtimes RESTART IDENTITY CASCADE;`, []);
@@ -43,8 +50,6 @@ describe('MoviesController (e2e)', () => {
     it('Should return a list with only one movie', async () => {
         const response = await request(app.getHttpServer())
         .get('/movies/all').expect(200);
-
-        
         expect(response.body).toEqual([
             {
                 id: 1,
@@ -228,6 +233,18 @@ describe('MoviesController (e2e)', () => {
         await request(app.getHttpServer())
         .delete('/showtimes/1')
         .expect(200);
+    });
+
+    it('should fail to add a showtime with missing fields', async () => {
+        await request(app.getHttpServer())
+        .post('/showtimes')
+        .send({
+            movieId: 1,
+            theater: "Theater 1",
+            startTime: '2021-09-08T12:00:00.000Z',
+            endTime: '2021-09-08T10:00:00.000Z'
+        })
+        .expect(400);
     });
 
 
