@@ -47,6 +47,7 @@ describe('MoviesController (e2e)', () => {
         await app.close();
     });
 
+    // Sanity check for movies
     it('Should return a list with only one movie', async () => {
         const response = await request(app.getHttpServer())
         .get('/movies/all').expect(200);
@@ -94,8 +95,6 @@ describe('MoviesController (e2e)', () => {
         expect(response.body.theater).toBe('Theater 1');
         expect(response.body.startTime).toBe('2021-09-06T12:00:00.000Z');
         expect(response.body.endTime).toBe('2021-09-06T14:00:00.000Z');
-
-       
     });
 
     it('should return a list containing one showtime', async () => {

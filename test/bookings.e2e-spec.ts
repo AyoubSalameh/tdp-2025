@@ -55,7 +55,7 @@ describe('BookingsController (e2e)', () => {
         await app.close();
     });
 
-    it('should return a not found error', async () => {
+    it('should return a not found error for a non existend showtime', async () => {
         await request(app.getHttpServer())
         .post('/bookings')
         .send({
@@ -74,6 +74,7 @@ describe('BookingsController (e2e)', () => {
             userId: "84438967-f68f-4fa0-b620-0f08217e76af"
         }).expect(200);
         expect(response.body).toHaveProperty('bookingId');
+        expect(response.body.bookingId).toEqual(expect.any(String));
     });
 
     it('should return an error for double booking', async() => {

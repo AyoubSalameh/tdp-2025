@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../db.service';
 import { CreateMovieDto, MovieResponseDto } from './create-movie.dto';
 
@@ -25,6 +25,9 @@ export class MoviesService {
         const params = [movie.title, movie.genre, movie.duration, movie.rating, movie.releaseYear];
         const result = await this.databaseService.query(sql, params);
         console.log('Movie added');
+        if (result.rows.length === 0) {
+            throw new BadRequestException('Invalid request');
+        }
         return result.rows[0] as MovieResponseDto;
     
     }

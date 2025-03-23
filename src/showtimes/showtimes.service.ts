@@ -10,7 +10,6 @@ export class ShowtimesService {
         const sql = 'SELECT id, price::FLOAT AS price, "movieId", theater, "startTime", "endTime" FROM showtimes;';
         const params = [];
         const result = await this.databaseService.query(sql, params);
-        console.log(result.rows);
         if (result.rows.length === 0) {
             return [];
         }

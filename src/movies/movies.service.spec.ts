@@ -2,10 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MovieResponseDto, CreateMovieDto } from "../movies/create-movie.dto";
 import { MoviesService } from "../movies/movies.service";
 import { DatabaseService } from "../db.service";
-import { query } from 'express';
+import e, { query } from 'express';
 import { mock } from 'node:test';
 import exp from 'constants';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('MoviesService', () => {
 
@@ -81,11 +81,8 @@ describe('MoviesService', () => {
         })
 
         it('should throw an error if the movie is invalid', async () => {
-            try {
-                await service.addMovie(InvalidMovie);
-            } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-            }
+            db.query = jest.fn().mockResolvedValue({rows: []});
+            await expect(service.addMovie(InvalidMovie)).rejects.toThrow(BadRequestException); 
         });
     });
 
@@ -93,13 +90,7 @@ describe('MoviesService', () => {
     describe('updateMovie', () => {
         const updatedMovie = {...movie, title: 'Inception'};
         const updatedMovieResponse = {...movieResponse, title: 'Inception'};
-        it('should update a movie', async () => {
-            db.query = jest.fn().mockResolvedValue({rows: [updatedMovieResponse]});
-            const result = await service.updateMovie('Interstellar', updatedMovie);
-            expect(result).toEqual(updatedMovieResponse);
-        });
-
-        it('should return the updated movie', async () => {
+        it('should update a movie and return the updated one', async () => {
             db.query = jest.fn().mockResolvedValue({rows: [updatedMovieResponse]});
             const result = await service.updateMovie('Interstellar', updatedMovie);
             expect(result).toEqual(updatedMovieResponse);
